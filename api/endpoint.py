@@ -24,4 +24,3 @@ def create_product(produto: ProdutoManual):
         return {"message": "Product message sent to Kafka", "product": produto}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
