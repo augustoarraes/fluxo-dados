@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      dockerfile: Dockerfile.api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - kafka
+      - postgres
+    volumes:
+      - ./api/:/app/api
+    env_file:
+      - .env
+    networks:
+      - fluxo-network
+
+  scheduler:
+    build:
+      dockerfile: Dockerfile.scheduler
+    ports:
+      - "8010:8010"
+    depends_on:
+      - kafka
+      - api
+    volumes:
+      - ./scheduler/:/app/scheduler
+    env_file:
+      - .env
+    networks:
+      - fluxo-network
+
+  postgres:
+    image: postgres:12.4-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: fluxo-dados
+    ports:
+      - 5432:5432
+    networks:
+      - fluxo-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - fluxo-network
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - fluxo-network
+  webkafka:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 9030:8080
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+      - KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL=PLAINTEXT
+      - KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM=PLAIN
+    networks:
+      - fluxo-network
+
+volumes:
+  postgres_data:
+
+
+networks: 
+  fluxo-network:
+    driver: bridge

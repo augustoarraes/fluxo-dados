@@ -1,0 +1,28 @@
+# OS files
+.DS_store
+
+# Cache Python
+__pycache__
+.pytest_cache
+.covarege
+
+# Applications
+*.app
+*.exe
+*.war
+*.bat
+*.bin
+*.dll
+
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
+upload/*
+
+# Temporary files
+*.tmp
+tmp/
