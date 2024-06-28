@@ -9,6 +9,10 @@ Sistema distribuído que realiza o consumo, transformação, persistência e pro
 
 Os tópicos do Kafka, que estão no `.env`, são criados na primeira chamada no fluxo da aplicação. A tabela do Banco é criada automaticamente via ORM.
 
+## Tópicos do Kafka e Fluxo da App
+
+* cadastro-produtos: Tópico utilizado como entrada manual (que pode simula um entrada de outro sistema terceiro, no endpoint `/produto/manual`). É o tópico inicial da máquina de tado da aplicação. A Mensagem com esse tópico é entrada imediata ao Kafka, que será consumida e transformada (adapta o Json para outro formato) pelo Scheduler. Após a mensagem ser transformada pelo Scheduler, essa nova mensagem é enviada via REST (endpoint `/produto/scheduler`) à API Python. A API persiste em banco essa mensagem transformada pelo Scheduler.
+* produtos-persistidos: Continuando o ciclo do processo, na API Python, aqui já utilizando esse novo tópico Kafka (produtos-persistidos), API escreve no Kafka como resposta da mensagem que foi inserida em banco de dados.
 
 # Como Executar & Testar
 
@@ -38,6 +42,5 @@ Os tópicos do Kafka, que estão no `.env`, são criados na primeira chamada no 
 
 # Outros
 
-http://127.0.0.1:8000/docs
-
-http://127.0.0.1:8010/docs
+http://127.0.0.1:8000/docs : Swagger da API
+http://127.0.0.1:8010/docs : Swagger do Scheduller
