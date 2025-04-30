@@ -1,7 +1,7 @@
 # Fluxo de Dados
 Sistema distribuído que realiza o consumo, transformação, persistência e produção de dados
 
-# Aplicação
+## Aplicação
 Sistema distribuído que realiza o consumo, transformação, persistência e produção de dados utilizando Kafka, Python e PostgreSQL. O sistema é composto por duas aplicações distintas:
 
 1. Responsável por consumir dados do Kafka, realizar a transformação e enviar os dados transformados via um endpoint REST.
@@ -14,7 +14,7 @@ Os tópicos do Kafka, que estão no `.env`, são criados na primeira chamada no 
 * cadastro-produtos: Tópico utilizado como entrada manual (que pode simula um entrada de outro sistema terceiro, no endpoint `/produto/manual`). É o tópico inicial da máquina de tado da aplicação. A Mensagem com esse tópico é entrada imediata ao Kafka, que será consumida e transformada (adapta o Json para outro formato) pelo Scheduler. Após a mensagem ser transformada pelo Scheduler, essa nova mensagem é enviada via REST (endpoint `/produto/scheduler`) à API Python. A API persiste em banco essa mensagem transformada pelo Scheduler.
 * produtos-persistidos: Continuando o ciclo do processo, na API Python, aqui já utilizando esse novo tópico Kafka (produtos-persistidos), API escreve no Kafka como resposta da mensagem que foi inserida em banco de dados.
 
-# Como Executar & Testar
+## Como Executar & Testar
 
 - 1. `docker compose up -d`
 - 2. Produzir manualmente a Mensagem via webkafka `http://localhost:9030/` ou via endpoint `curl --location 'http://localhost:8000/produto/manual' \
@@ -40,7 +40,11 @@ Os tópicos do Kafka, que estão no `.env`, são criados na primeira chamada no 
 <div style="text-align: center;">
 <img src="archt.png" alt="Arquitetura do Fluxo de Dados" width="50%"></div>
 
-# Outros
+## Outros
 
 http://127.0.0.1:8000/docs : Swagger da API
 http://127.0.0.1:8010/docs : Swagger do Scheduller
+
+## Contato
+
+[Augusto Arraes](http://linktr.ee/a.arraes)
